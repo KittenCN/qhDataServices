@@ -32,6 +32,13 @@ namespace qhDataServices
             SW("Service Start.");
             try
             {
+                XmlDocument xmlCon = new XmlDocument();
+                xmlCon.Load(strLocalAdd);
+                XmlNode xnCon = xmlCon.SelectSingleNode("Config");
+                LinkString = xnCon.SelectSingleNode("LinkString").InnerText;
+                RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
+                DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
+
                 Thread.Sleep(30000);        //30秒等待
                 MainEvent();
                 SW("MainEvent Success");
@@ -42,7 +49,7 @@ namespace qhDataServices
             }
             AutoLog = false;
             oTimer_Get.Enabled = true;
-            oTimer_Get.Interval = 1800000;      //30分钟轮询一次
+            oTimer_Get.Interval = DBCacheRate;      //30分钟轮询一次
             oTimer_Get.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
         }
 
@@ -78,12 +85,8 @@ namespace qhDataServices
             {
                 try
                 {
-                    XmlDocument xmlCon = new XmlDocument();
-                    xmlCon.Load(strLocalAdd);
-                    XmlNode xnCon = xmlCon.SelectSingleNode("Config");
-                    LinkString = xnCon.SelectSingleNode("LinkString").InnerText;
-                    RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
-                    DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
+                    calssSqlServer.SqlServerHelper ssh = new calssSqlServer.SqlServerHelper();
+                    ssh.connectToSQL(LinkString);
 
 
                 }

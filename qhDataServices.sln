@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "qhDataServices", "qhDataServices\qhDataServices.csproj", "{21A24F8A-2712-49B6-8A67-27079DD30D37}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "calssSqlServer", "calssSqlServer\calssSqlServer.csproj", "{B1589CCE-D4BF-4D1A-AD4A-76A63CB70DAF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{21A24F8A-2712-49B6-8A67-27079DD30D37}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21A24F8A-2712-49B6-8A67-27079DD30D37}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21A24F8A-2712-49B6-8A67-27079DD30D37}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1589CCE-D4BF-4D1A-AD4A-76A63CB70DAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1589CCE-D4BF-4D1A-AD4A-76A63CB70DAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1589CCE-D4BF-4D1A-AD4A-76A63CB70DAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1589CCE-D4BF-4D1A-AD4A-76A63CB70DAF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
