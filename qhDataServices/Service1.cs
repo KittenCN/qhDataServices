@@ -22,6 +22,7 @@ namespace qhDataServices
         public static string LinkString = "Server = 127.0.0.1;Database = SLEC_Carpark_DTXJQ;User ID = sa;Password = sa123;Trusted_Connection = False;";
         public static string RemoteInterface = "http://114.55.136.29:3000/admin/insertCar";
         public static int DBCacheRate = 1800;
+        public static string BaseTable = "CP_InOutCar";
         public Service1()
         {
             InitializeComponent();
@@ -38,6 +39,7 @@ namespace qhDataServices
                 LinkString = xnCon.SelectSingleNode("LinkString").InnerText;
                 RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
                 DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
+                BaseTable = xnCon.SelectSingleNode("CP_InOutCar").InnerText;
 
                 Thread.Sleep(30000);        //30秒等待
                 MainEvent();
@@ -88,7 +90,26 @@ namespace qhDataServices
                     calssSqlServer.SqlServerHelper ssh = new calssSqlServer.SqlServerHelper();
                     ssh.connectToSQL(LinkString);
 
-
+                    string strLastDateTime = "";
+                    string strSQLpara = " ";
+                    string strSQL = "select * from " + BaseTable + strSQLpara;
+                    int intSQLresult = ssh.checkToDataTable(strSQL);
+                    if(intSQLresult == 0)
+                    {
+                        DataTable dtResult = ssh.dt;
+                        if(dtResult.Rows.Count > 0)
+                        {
+                            for(int i = 0; i < dtResult.Rows.Count; i++)
+                            {
+                                DataRow dr = dtResult.Rows[0];
+                                string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"qq\",\"InChannelId\":\"1\",\"InDT\":\"2\",\"OutChannelId\":\"false\",\"OutDT\":\"qq\",\"CreateTime\":\"qq\",\"isOut\":\"qq\"}";
+                            }
+                        }
+                    }
+                    else
+                    {
+                        SW("Error::checkToDataTable::" + intSQLresult.ToString() + "::" + strSQL);
+                    }
                 }
                 catch(Exception ex)
                 {
