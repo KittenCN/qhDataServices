@@ -35,7 +35,7 @@ namespace qhDataServices
             SW("Service Start.");
             try
             {
-                Thread.Sleep(30000);
+                
 
                 XmlDocument xmlCon = new XmlDocument();
                 xmlCon.Load(strLocalAdd);
@@ -44,6 +44,12 @@ namespace qhDataServices
                 RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
                 DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
                 BaseTable = xnCon.SelectSingleNode("BaseTable").InnerText;
+                int intDebugMode = int.Parse(xnCon.SelectSingleNode("DebugMode").InnerText);
+                
+                if(intDebugMode == 1)
+                {
+                    Thread.Sleep(30000);
+                }                
 
                 MainEvent();
 
@@ -151,7 +157,7 @@ namespace qhDataServices
             try
             {
                 string str_logName = DateTime.Now.ToString("yyyyMMdd") + "_log.txt";
-                using (System.IO.StreamWriter sw = new System.IO.StreamWriter("C:\\" + str_logName, true))
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter(AppDomain.CurrentDomain.BaseDirectory + "\\Log\\" + str_logName, true))
                 {
                     sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + strT);
                 }

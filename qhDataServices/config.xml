@@ -6,5 +6,6 @@
   <!--远程接口地址-->
   <RemoteInterface>http://114.55.136.29:3000/admin/insertCar</RemoteInterface>
   <!--主事件轮询间隔,单位分钟-->
-  <DBCacheRate>1</DBCacheRate>
+  <DBCacheRate>30</DBCacheRate>
+  <DebugMode>0</DebugMode>
 </Config>
