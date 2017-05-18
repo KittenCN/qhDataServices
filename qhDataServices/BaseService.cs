@@ -15,15 +15,17 @@ using System.Xml;
 
 namespace qhDataServices
 {
-    public partial class Service1 : ServiceBase
+    public partial class BaseService : ServiceBase
     {
         static System.Timers.Timer oTimer_Get = new System.Timers.Timer();
-        public static string strLocalAdd = ".\\Config.xml";
+        public static string strLocalAdd = AppDomain.CurrentDomain.BaseDirectory + "Config.xml";
         public static string LinkString = "Server = 127.0.0.1;Database = SLEC_Carpark_DTXJQ;User ID = sa;Password = sa123;Trusted_Connection = False;";
         public static string RemoteInterface = "http://114.55.136.29:3000/admin/insertCar";
         public static int DBCacheRate = 1800;
         public static string BaseTable = "CP_InOutCar";
-        public Service1()
+        public static Boolean boolRunFlag = false;
+        public static string strIDRecord = AppDomain.CurrentDomain.BaseDirectory + "LastID.txt";
+        public BaseService()
         {
             InitializeComponent();
         }
@@ -33,26 +35,28 @@ namespace qhDataServices
             SW("Service Start.");
             try
             {
+                Thread.Sleep(30000);
+
                 XmlDocument xmlCon = new XmlDocument();
                 xmlCon.Load(strLocalAdd);
                 XmlNode xnCon = xmlCon.SelectSingleNode("Config");
                 LinkString = xnCon.SelectSingleNode("LinkString").InnerText;
                 RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
                 DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
-                BaseTable = xnCon.SelectSingleNode("CP_InOutCar").InnerText;
+                BaseTable = xnCon.SelectSingleNode("BaseTable").InnerText;
 
-                Thread.Sleep(30000);        //30秒等待
                 MainEvent();
+
+                AutoLog = false;
+                oTimer_Get.Enabled = true;
+                oTimer_Get.Interval = DBCacheRate * 1000 * 60;      
+                oTimer_Get.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
                 SW("MainEvent Success");
             }
             catch (Exception ex)
             {
                 SW(ex.Source + "。" + ex.Message);
             }
-            AutoLog = false;
-            oTimer_Get.Enabled = true;
-            oTimer_Get.Interval = DBCacheRate;      //30分钟轮询一次
-            oTimer_Get.Elapsed += new System.Timers.ElapsedEventHandler(OnTimedEvent);
         }
 
         protected override void OnStop()
@@ -79,31 +83,46 @@ namespace qhDataServices
 
         private void MainEvent()
         {
-            //string url = txtURL.Text + txtData.Text;
-            //string param = "{\"access_token\":\"" + txtData.Text + "\",\"name\":\"qq\",\"parentid\":\"1\",\"order\":\"2\",\"createDeptGroup\":\"false\"}";
-            //string callback = Post(url, param);
-            //txtResult.Text = callback;
-            if(File.Exists(strLocalAdd))
+            if (File.Exists(strLocalAdd) && boolRunFlag == false)
             {
                 try
                 {
+
+                    boolRunFlag = true;
+                    int intLastID = -1;
+                    int intCurrentID = -1;
+                    if (File.Exists(strIDRecord))
+                    {
+                        string strReadst = ReadTXT(strIDRecord);
+                        if (strReadst.Length > 0)
+                        {
+                            intLastID = int.Parse(strReadst);
+                        }
+                    }
+                    else
+                    {
+                        WriteTXT(strIDRecord, "-1");
+                        SW("create new id record file");
+                    }
+                    string strSQLpara = " where id > " + intLastID;
+                    string strSQL = "select * from " + BaseTable + strSQLpara;
                     calssSqlServer.SqlServerHelper ssh = new calssSqlServer.SqlServerHelper();
                     ssh.connectToSQL(LinkString);
-
-                    string strLastDateTime = "";
-                    string strSQLpara = " ";
-                    string strSQL = "select * from " + BaseTable + strSQLpara;
                     int intSQLresult = ssh.checkToDataTable(strSQL);
-                    if(intSQLresult == 0)
+                    if (intSQLresult == 0)
                     {
                         DataTable dtResult = ssh.dt;
-                        if(dtResult.Rows.Count > 0)
+                        if (dtResult.Rows.Count > 0)
                         {
-                            for(int i = 0; i < dtResult.Rows.Count; i++)
+                            for (int i = 0; i < dtResult.Rows.Count; i++)
                             {
                                 DataRow dr = dtResult.Rows[0];
-                                string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"qq\",\"InChannelId\":\"1\",\"InDT\":\"2\",\"OutChannelId\":\"false\",\"OutDT\":\"qq\",\"CreateTime\":\"qq\",\"isOut\":\"qq\"}";
+                                string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"" + dr["CCode"] + "\",\"InChannelId\":\"" + dr["InChannelId"] + "\",\"InDT\":\"" + dr["InDT"] + "\",\"OutChannelId\":\"" + dr["OutChannelId"] + "\",\"OutDT\":\"" + dr["OutDT"] + "\",\"CreateTime\":\"" + dr["CreateTime"] + "\",\"isOut\":\"" + dr["isOut"] + "\"}";
+                                string strCallBask = Post(RemoteInterface, param);
+                                intCurrentID = int.Parse(dr["ID"].ToString());
+                                SW("Complete::POST::" + RemoteInterface + "::" + param + "::" + strCallBask);
                             }
+                            WriteTXT(strIDRecord, intCurrentID.ToString());
                         }
                     }
                     else
@@ -111,19 +130,35 @@ namespace qhDataServices
                         SW("Error::checkToDataTable::" + intSQLresult.ToString() + "::" + strSQL);
                     }
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-
+                    SW("Error::" + ex.Message);
                 }
+                boolRunFlag = false;
+            }
+            else if (!File.Exists(strLocalAdd))
+            {
+                SW("config file lost!");
+            }
+            else if (boolRunFlag == true)
+            {
+                SW("service is running!");
             }
         }
 
         private void SW(string strT)
         {
-            string str_logName = DateTime.Now.ToShortDateString().ToString() + "_log.txt";
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter("C:\\" + str_logName, true))
+            try
             {
-                sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + strT);
+                string str_logName = DateTime.Now.ToString("yyyyMMdd") + "_log.txt";
+                using (System.IO.StreamWriter sw = new System.IO.StreamWriter("C:\\" + str_logName, true))
+                {
+                    sw.WriteLine(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss ") + strT);
+                }
+            }
+            catch(Exception ex)
+            {
+                
             }
         }
 
@@ -153,6 +188,30 @@ namespace qhDataServices
                 strValue += StrDate + "\r\n";
             }
             return strValue;
+        }
+        public string ReadTXT(string path)
+        {
+            string strResult = "";
+            StreamReader sr = new StreamReader(path, Encoding.Default);
+            String line;
+            while ((line = sr.ReadLine()) != null)
+            {
+                strResult = line.ToString();
+            }
+            sr.Close();
+            return strResult;
+        }
+        public void WriteTXT(string path, string data)
+        {
+            FileStream fs_txt = new FileStream(path, FileMode.Create);
+            StreamWriter sw_txt = new StreamWriter(fs_txt);
+            //开始写入
+            sw_txt.Write(data);
+            //清空缓冲区
+            sw_txt.Flush();
+            //关闭流
+            sw_txt.Close();
+            fs_txt.Close();
         }
     }
 }

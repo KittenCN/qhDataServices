@@ -17,7 +17,7 @@ namespace qhDataServices
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new BaseService()
             };
             ServiceBase.Run(ServicesToRun);
         }

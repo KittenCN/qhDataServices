@@ -1,6 +1,6 @@
 ﻿namespace qhDataServices
 {
-    partial class Service1
+    partial class BaseService
     {
         /// <summary> 
         /// 必需的设计器变量。
