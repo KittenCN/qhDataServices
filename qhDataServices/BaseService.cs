@@ -48,6 +48,7 @@ namespace qhDataServices
                 
                 if(intDebugMode == 1)
                 {
+                    SW("Debug Mode!");
                     Thread.Sleep(30000);
                 }                
 
@@ -129,6 +130,10 @@ namespace qhDataServices
                                 SW("Complete::POST::" + RemoteInterface + "::" + param + "::" + strCallBask);
                             }
                             WriteTXT(strIDRecord, intCurrentID.ToString());
+                        }
+                        else
+                        {
+                            SW("No Record after ID:" + intLastID);
                         }
                     }
                     else
