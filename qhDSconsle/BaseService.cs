@@ -35,8 +35,6 @@ namespace qhDSconsle
             SW("Service Start.");
             try
             {
-
-
                 XmlDocument xmlCon = new XmlDocument();
                 xmlCon.Load(strLocalAdd);
                 XmlNode xnCon = xmlCon.SelectSingleNode("Config");
@@ -94,7 +92,6 @@ namespace qhDSconsle
             {
                 try
                 {
-
                     boolRunFlag = true;
                     int intLastID = -1;
                     int intCurrentID = -1;
