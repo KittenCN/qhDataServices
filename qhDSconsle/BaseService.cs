@@ -29,7 +29,6 @@ namespace qhDSconsle
         {
             InitializeComponent();
         }
-
         protected override void OnStart(string[] args)
         {
             SW("Service Start.");
@@ -49,9 +48,7 @@ namespace qhDSconsle
                     SW("Debug Mode!");
                     Thread.Sleep(30000);
                 }
-
                 MainEvent();
-
                 AutoLog = false;
                 oTimer_Get.Enabled = true;
                 oTimer_Get.Interval = DBCacheRate * 1000 * 60;
@@ -63,12 +60,10 @@ namespace qhDSconsle
                 SW(ex.Source + "。" + ex.Message);
             }
         }
-
         protected override void OnStop()
         {
             SW("Service Stop.");
         }
-
         private void OnTimedEvent(object sender, System.Timers.ElapsedEventArgs e)
         {
             SW("Main Start.");
@@ -85,7 +80,6 @@ namespace qhDSconsle
             oTimer_Get.Enabled = true;
             SW("Main End.");
         }
-
         private void MainEvent()
         {
             if (File.Exists(strLocalAdd) && boolRunFlag == false)
@@ -153,7 +147,6 @@ namespace qhDSconsle
                 SW("service is running!");
             }
         }
-
         private void SW(string strT)
         {
             try
@@ -169,7 +162,6 @@ namespace qhDSconsle
 
             }
         }
-
         public static string Post(string url, string param)
         {
             string strURL = url;
