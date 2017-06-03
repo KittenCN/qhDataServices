@@ -34,18 +34,34 @@ namespace qhDSconsle
                 switch (rs)
                 {
                     case 1:
-                        //取当前可执行文件路径，加上"s"参数，证明是从windows服务启动该程序
-                        var path = Process.GetCurrentProcess().MainModule.FileName + " s";
-                        Process.Start("sc", "create LongintService binpath= \"" + path + "\" displayName= LongintService start= auto");
-                        Process.Start("sc", "start LongintService");
-                        Console.WriteLine("安装运行成功");
-                        Console.Read();
+                        try
+                        {
+                            //取当前可执行文件路径，加上"s"参数，证明是从windows服务启动该程序
+                            var path = Process.GetCurrentProcess().MainModule.FileName + " s";
+                            Process.Start("sc", "create LongintService binpath= \"" + path + "\" displayName= LongintService start= auto");
+                            Process.Start("sc", "start LongintService");
+                            Console.WriteLine("安装运行成功");
+                            Console.Read();                            
+                        }
+                        catch(Exception ex)
+                        {
+                            Console.WriteLine("安装错误::" + ex.Message.ToString());
+                            Console.Read();
+                        }
                         break;
                     case 2:
-                        Process.Start("sc", "stop LongintService");
-                        Process.Start("sc", "delete LongintService");
-                        Console.WriteLine("卸载成功");
-                        Console.Read();
+                        try
+                        {
+                            Process.Start("sc", "stop LongintService");
+                            Process.Start("sc", "delete LongintService");
+                            Console.WriteLine("卸载成功");
+                            Console.Read();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("卸载失败::" + ex.Message.ToString());
+                            Console.Read();
+                        }
                         break;
                     case 3: break;
                 }
