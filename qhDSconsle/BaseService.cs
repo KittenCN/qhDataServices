@@ -20,7 +20,7 @@ namespace qhDSconsle
         static System.Timers.Timer oTimer_Get = new System.Timers.Timer();
         public static string strLocalAdd = AppDomain.CurrentDomain.BaseDirectory + "Config.xml";
         public static string LinkString = "Server = 127.0.0.1;Database = SLEC_Carpark_DTXJQ;User ID = sa;Password = sa123;Trusted_Connection = False;";
-        public static string RemoteInterface = "http://114.55.136.29:3000/admin/insertCar";
+        public static string RemoteInterface = "http://qh.china-ess.com:3000/admin/insertCar";
         public static int DBCacheRate = 1800;
         public static string BaseTable = "CP_InOutCar";
         public static Boolean boolRunFlag = false;

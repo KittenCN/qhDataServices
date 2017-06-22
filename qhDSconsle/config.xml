@@ -4,7 +4,7 @@
   <LinkString>Server = localhost;Database = SLEC_Carpark_DTXJQ;User ID = sa;Password = 0;Trusted_Connection = False;</LinkString>
   <BaseTable>CP_InOutCar</BaseTable>
   <!--远程接口地址-->
-  <RemoteInterface>http://qh.china-ess.com/admin/insertCar</RemoteInterface>
+  <RemoteInterface>http://qh.china-ess.com:3000/admin/insertCar</RemoteInterface>
   <!--主事件轮询间隔,单位分钟-->
   <DBCacheRate>30</DBCacheRate>
   <DebugMode>0</DebugMode>
