@@ -114,7 +114,7 @@ namespace qhDSconsle
                         {
                             for (int i = 0; i < dtResult.Rows.Count; i++)
                             {
-                                DataRow dr = dtResult.Rows[0];
+                                DataRow dr = dtResult.Rows[i];
                                 string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"" + dr["CCode"] + "\",\"InChannelId\":\"" + dr["InChannelId"] + "\",\"InDT\":\"" + dr["InDT"] + "\",\"OutChannelId\":\"" + dr["OutChannelId"] + "\",\"OutDT\":\"" + dr["OutDT"] + "\",\"CreateTime\":\"" + dr["CreateTime"] + "\",\"isOut\":\"" + dr["isOut"] + "\"}";
                                 string strCallBask = Post(RemoteInterface, param);
                                 intCurrentID = int.Parse(dr["ID"].ToString());
