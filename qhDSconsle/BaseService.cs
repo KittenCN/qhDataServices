@@ -25,6 +25,7 @@ namespace qhDSconsle
         public static string BaseTable = "CP_InOutCar";
         public static Boolean boolRunFlag = false;
         public static string strIDRecord = AppDomain.CurrentDomain.BaseDirectory + "LastID.txt";
+        public static string InChannelID = "0000";
         public BaseService()
         {
             InitializeComponent();
@@ -41,6 +42,7 @@ namespace qhDSconsle
                 RemoteInterface = xnCon.SelectSingleNode("RemoteInterface").InnerText;
                 DBCacheRate = int.Parse(xnCon.SelectSingleNode("DBCacheRate").InnerText);
                 BaseTable = xnCon.SelectSingleNode("BaseTable").InnerText;
+                InChannelID = xnCon.SelectSingleNode("InChannelID").InnerText;
                 int intDebugMode = int.Parse(xnCon.SelectSingleNode("DebugMode").InnerText);
 
                 if (intDebugMode == 1)
@@ -115,7 +117,16 @@ namespace qhDSconsle
                             for (int i = 0; i < dtResult.Rows.Count; i++)
                             {
                                 DataRow dr = dtResult.Rows[i];
-                                string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"" + dr["CCode"] + "\",\"InChannelId\":\"" + dr["InChannelId"] + "\",\"InDT\":\"" + dr["InDT"] + "\",\"OutChannelId\":\"" + dr["OutChannelId"] + "\",\"OutDT\":\"" + dr["OutDT"] + "\",\"CreateTime\":\"" + dr["CreateTime"] + "\",\"isOut\":\"" + dr["isOut"] + "\"}";
+                                string strInChID;
+                                if(InChannelID == "0000" || InChannelID == null || InChannelID.Length == 0)
+                                {
+                                    strInChID = dr["InChannelId"].ToString();
+                                }
+                                else
+                                {
+                                    strInChID = InChannelID;
+                                }
+                                string param = "{\"ID\":\"" + dr["ID"] + "\",\"CCode\":\"" + dr["CCode"] + "\",\"InChannelId\":\"" + strInChID + "\",\"InDT\":\"" + dr["InDT"] + "\",\"OutChannelId\":\"" + dr["OutChannelId"] + "\",\"OutDT\":\"" + dr["OutDT"] + "\",\"CreateTime\":\"" + dr["CreateTime"] + "\",\"isOut\":\"" + dr["isOut"] + "\"}";
                                 string strCallBask = Post(RemoteInterface, param);
                                 intCurrentID = int.Parse(dr["ID"].ToString());
                                 SW("Complete::POST::" + RemoteInterface + "::" + param + "::" + strCallBask);

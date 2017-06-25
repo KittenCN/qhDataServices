@@ -3,9 +3,11 @@
   <!--数据库配置-->
   <LinkString>Server = localhost;Database = SLEC_Carpark;User ID = sa;Password = 0;Trusted_Connection = False;</LinkString>
   <BaseTable>CP_InOutCar</BaseTable>
+  <InChannelID>165</InChannelID>
   <!--远程接口地址-->
   <RemoteInterface>http://qh.china-ess.com:3000/admin/insertCar</RemoteInterface>
   <!--主事件轮询间隔,单位分钟-->
   <DBCacheRate>30</DBCacheRate>
+  <!--Debug模式-->
   <DebugMode>0</DebugMode>
 </Config>
